@@ -20,13 +20,13 @@
 
 == Overview
 
-_Sling Node Types_ is a `jar` that artifact delivers a https://jackrabbit.apache.org/jcr/node-type-notation.html[CND file] with all node types and namespaces defined in https://sling.apache.org/[Apache Sling 12]. It can be used for the https://jackrabbit.apache.org/filevault/validation.html[FileVault Validation Module] and its `jackrabbit-nodetype` validator.
+_Sling Node Types_ is a `jar` artifact that delivers a https://jackrabbit.apache.org/jcr/node-type-notation.html[CND file] with all node types and namespaces defined in https://sling.apache.org/[Apache Sling 12]. It can be used for the https://jackrabbit.apache.org/filevault/validation.html[FileVault Validation Module] and its `jackrabbit-nodetype` validator.
 
-The program functionality is similar to https://github.com/Netcentric/aem-nodetypes[_AEM Node Types_] (`biz.netcentric.aem:aem-nodetypes`). However, contrary to _AEM Node Types_, this program delivers a CND file exported from a clean Apache Sling 12 instance, without AEM-related code on the top of it.
+The functionality of _Sling Node Types_ is similar to https://github.com/Netcentric/aem-nodetypes[_AEM Node Types_] (`biz.netcentric.aem:aem-nodetypes`). However, unlike _AEM Node Types_, this program delivers a CND file exported directly from a clean Apache Sling 12 instance, without AEM-related code on the top of it.
 
 == Usage
 
-In order to use _Sling Node Types_, it should be added as a dependency of _Apache Jackrabbit FileVault Package Maven Plugin_. Additionally, a `sling.cnd` file should be defined in the `jackrabbit-nodetypes` validator. The file will be picked up during the build from the _Sling Node Types_ classpath:
+In order to use _Sling Node Types_, it should be added as a dependency of _Apache Jackrabbit FileVault Package Maven Plugin_. Additionally, a `sling.cnd` file should be defined within the `jackrabbit-nodetypes` validator. The file will be picked up during the build from the _Sling Node Types_ classpath:
 
 [source, xml]
 ----
