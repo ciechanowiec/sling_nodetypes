@@ -1,0 +1,69 @@
+[.text-justify]
+= Sling Node Types
+:reproducible:
+:doctype: article
+:author: Herman Ciechanowiec
+:email: herman@ciechanowiec.eu
+:chapter-signifier:
+:sectnums:
+:sectnumlevels: 5
+:sectanchors:
+:toc: left
+:toclevels: 5
+:icons: font
+// Docinfo is used for foldable TOC.
+// -> For full usage example see https://github.com/remkop/picocli
+:docinfo: shared,private
+:linkcss:
+:stylesdir: https://www.ciechanowiec.eu/linux_mantra/
+:stylesheet: adoc-css-style.css
+
+== Overview
+
+_Sling Node Types_ is a `jar` that artifact delivers a https://jackrabbit.apache.org/jcr/node-type-notation.html[CND file] with all node types and namespaces defined in https://sling.apache.org/[Apache Sling 12]. It can be used for the https://jackrabbit.apache.org/filevault/validation.html[FileVault Validation Module] and its `jackrabbit-nodetype` validator.
+
+The program functionality is similar to https://github.com/Netcentric/aem-nodetypes[_AEM Node Types_] (`biz.netcentric.aem:aem-nodetypes`). However, contrary to _AEM Node Types_, this program delivers a CND file exported from a clean Apache Sling 12 instance, without AEM-related code on the top of it.
+
+== Usage
+
+In order to use _Sling Node Types_, it should be added as a dependency of _Apache Jackrabbit FileVault Package Maven Plugin_. Additionally, a `sling.cnd` file should be defined in the `jackrabbit-nodetypes` validator. The file will be picked up during the build from the _Sling Node Types_ classpath:
+
+[source, xml]
+----
+<plugin>
+    <groupId>org.apache.jackrabbit</groupId>
+    <artifactId>filevault-package-maven-plugin</artifactId>
+    <version>${filevault-package.plugin.version}</version>
+    <extensions>true</extensions>
+    <configuration>
+        <validatorsSettings>
+            <jackrabbit-nodetypes>
+                <options>
+                    <!-- use the nodetypes and namespaces from the sling-nodetypes.jar provided in the plugin dependencies -->
+                    <cnds>tccl:sling.cnd</cnds>
+                </options>
+            </jackrabbit-nodetypes>
+        </validatorsSettings>
+    </configuration>
+    <dependencies>
+        <dependency>
+            <groupId>eu.ciechanowiec</groupId>
+            <artifactId>sling.nodetypes</artifactId>
+            <version>${sling.nodetypes.version}</version>
+        </dependency>
+    </dependencies>
+</plugin>
+----
+
+== Generation of CND
+
+The CND file delivered by _Sling Node Types_ was exported from a running plain Apache Sling 12 instance through the https://issues.apache.org/jira/browse/SLING-9945[JCR Web Console Plugin] via the endpoint `/system/console/status-JCR%20CND.txt`.
+
+== License
+The program is subject to MIT No Attribution License
+
+Copyright © 2024 Herman Ciechanowiec
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the 'Software'), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so.
+
+The Software is provided 'as is', without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose and noninfringement. In no event shall the authors or copyright holders be liable for any claim, damages or other liability, whether in an action of contract, tort or otherwise, arising from, out of or in connection with the Software or the use or other dealings in the Software.

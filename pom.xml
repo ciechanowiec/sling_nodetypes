@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>eu.ciechanowiec</groupId>
+    <artifactId>sling.nodetypes</artifactId>
+    <version>12.0.0</version>
+    <packaging>jar</packaging>
+
+    <name>Sling - Node Types</name>
+    <description>Delivers a CND file with all node types and namespaces defined in Apache Sling 12</description>
+
+    <url>${url}</url>
+    <inceptionYear>2024</inceptionYear>
+
+    <licenses>
+        <license>
+            <name>MIT No Attribution</name>
+            <url>https://spdx.org/licenses/MIT-0.html</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>ciechanowiec</id>
+            <name>${project.developer.name}</name>
+            <email>${project.developer.email}</email>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git@github.com:ciechanowiec/sling_nodetypes.git</connection>
+        <developerConnection>scm:git:git@github.com:ciechanowiec/sling_nodetypes.git</developerConnection>
+        <tag>${project.artifactId}-${project.version}</tag>
+        <url>${url}</url>
+    </scm>
+
+    <issueManagement>
+        <system>GitHub Issues</system>
+        <url>${url}/issues</url>
+    </issueManagement>
+
+    <distributionManagement>
+        <repository>
+            <id>ossrh</id>
+            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <properties>
+        <maven.compiler.release>21</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <url>https://github.com/ciechanowiec/sling_nodetypes</url>
+        <bundle.category>Apache Sling</bundle.category>
+        <project.developer.name>Herman Ciechanowiec</project.developer.name>
+        <project.developer.email>herman@ciechanowiec.eu</project.developer.email>
+        <bnd-maven-plugin.version>7.0.0</bnd-maven-plugin.version>
+        <maven-antrun-plugin.version>3.1.0</maven-antrun-plugin.version>
+        <build-helper-maven-plugin.version>3.6.0</build-helper-maven-plugin.version>
+        <maven-jar-plugin.version>3.4.2</maven-jar-plugin.version>
+        <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
+        <versions-maven-plugin.version>2.16.2</versions-maven-plugin.version>
+        <maven-deploy-plugin.version>3.1.2</maven-deploy-plugin.version>
+        <maven-gpg-plugin.version>3.2.4</maven-gpg-plugin.version>
+        <nexus-staging-maven-plugin.version>1.7.0</nexus-staging-maven-plugin.version>
+        <enforcer.plugin.version>3.5.0</enforcer.plugin.version>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>${maven-resources-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>copy-license-and-readme-to-jar</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.basedir}</directory>
+                                    <includes>
+                                        <include>LICENSE.txt</include>
+                                        <include>login-form.png</include>
+                                        <include>README.adoc</include>
+                                        <include>README-docinfo.html</include>
+                                        <include>README-docinfo-footer.html</include>
+                                    </includes>
+                                    <!-- To enable variables in the resources files
+                                         (https://maven.apache.org/plugins/maven-resources-plugin/examples/filter.html): -->
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>biz.aQute.bnd</groupId>
+                <artifactId>bnd-maven-plugin</artifactId>
+                <version>${bnd-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>bnd-process</id>
+                        <goals>
+                            <goal>bnd-process</goal>
+                        </goals>
+                        <configuration>
+                            <bnd><![CDATA[
+Bundle-Category: ${bundle.category}
+Bundle-Description: ${project.description}
+Bundle-DocURL: ${url}
+Bundle-Name: ${project.groupId}.${project.artifactId}
+Bundle-SymbolicName: ${project.groupId}.${project.artifactId}
+Bundle-Version: ${project.version}
+Import-Package: !lombok,*
+
+# reproducible builds (https://github.com/bndtools/bnd/issues/3521)
+-noextraheaders: true
+                                ]]></bnd>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>${maven-jar-plugin.version}</version>
+                <configuration>
+                    <archive>
+                        <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>${maven-antrun-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>remove-and-rename-shaded</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <copy file="${project.build.directory}/${project.build.finalName}.jar"
+                                      tofile="${project.build.directory}/${project.build.finalName}-sources.jar"/>
+                                <copy file="${project.build.directory}/${project.build.finalName}.jar"
+                                      tofile="${project.build.directory}/${project.build.finalName}-javadoc.jar"/>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>${build-helper-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>attach-artifacts</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>attach-artifact</goal>
+                        </goals>
+                        <configuration>
+                            <artifacts>
+                                <artifact>
+                                    <file>${project.build.directory}/${project.build.finalName}-sources.jar</file>
+                                    <type>jar</type>
+                                    <classifier>sources</classifier>
+                                </artifact>
+                                <artifact>
+                                    <file>${project.build.directory}/${project.build.finalName}-javadoc.jar</file>
+                                    <type>jar</type>
+                                    <classifier>javadoc</classifier>
+                                </artifact>
+                            </artifacts>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>timestamp-property</id>
+                        <goals>
+                            <goal>timestamp-property</goal>
+                        </goals>
+                        <configuration>
+                            <name>current.year</name>
+                            <pattern>yyyy</pattern>
+                            <locale>GB</locale>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <version>${versions-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>display-dependency-updates</goal>
+                            <goal>display-plugin-updates</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <ruleSet>
+                        <ignoreVersions>
+                            <ignoreVersion>
+                                <!-- Ignoring milestone versions, like 3.0.4-M5 and 1.0.0-m23 -->
+                                <type>regex</type>
+                                <version>(?i)[0-9].+-m[0-9]+</version>
+                            </ignoreVersion>
+                            <ignoreVersion>
+                                <!-- Ignoring alpha versions, like 5.0.0.Alpha2 and 12.0.0.alpha3 -->
+                                <type>regex</type>
+                                <version>(?i).*ALPHA.*</version>
+                            </ignoreVersion>
+                            <ignoreVersion>
+                                <!-- Ignoring beta versions, like 5.0.0.Beta2 and 12.0.0.beta3 -->
+                                <type>regex</type>
+                                <version>(?i).*BETA.*</version>
+                            </ignoreVersion>
+                            <ignoreVersion>
+                                <!-- Ignoring preview versions, like 12.1.0.jre11-preview -->
+                                <type>regex</type>
+                                <version>(?i).*PREVIEW.*</version>
+                            </ignoreVersion>
+                            <ignoreVersion>
+                                <!-- Ignoring candidate release versions, like 6.2.0.CR2 -->
+                                <type>regex</type>
+                                <version>(?i)[0-9].+\.CR[0-9]+</version>
+                            </ignoreVersion>
+                            <ignoreVersion>
+                                <!-- Ignoring release candidate versions, like 2.16.1-rc1 and 1.8.20-RC -->
+                                <type>regex</type>
+                                <version>(?i)[0-9].+-rc[0-9]*</version>
+                            </ignoreVersion>
+                            <ignoreVersion>
+                                <!-- Ignoring develop versions, like 15.0.0.Dev01 -->
+                                <type>regex</type>
+                                <version>(?i)[0-9].+\.dev[0-9]*</version>
+                            </ignoreVersion>
+                            <ignoreVersion>
+                                <!-- Ignoring ongoing build numbers, like 2.5.0-b34 and 2.5.0-B34 -->
+                                <type>regex</type>
+                                <version>(?i)[0-9].+-b[0-9]+</version>
+                            </ignoreVersion>
+                        </ignoreVersions>
+                    </ruleSet>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>${enforcer.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>enforce-maven</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireMavenVersion>
+                                    <message>Project must be built with Maven 3.9.0 or higher</message>
+                                    <version>[3.9.0,)</version>
+                                </requireMavenVersion>
+                                <requireJavaVersion>
+                                    <version>${maven.compiler.release}</version>
+                                    <message>The project requires JDK of ${maven.compiler.release} version</message>
+                                </requireJavaVersion>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <!-- Release procedure:
+        1. `mvn clean deploy -P release` -> will perform deploy and release
+        2. Add the following settings to ~/.m2/settings.xml:
+        ****
+        <settings>
+          <servers>
+            <server>
+              <id>ossrh</id>
+              <username>your-dynamic-nexus-id</username>
+              <password>your-nexus-token</password>
+            </server>
+          </servers>
+        </settings>
+        ****
+        -->
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-deploy-plugin</artifactId>
+                        <version>${maven-deploy-plugin.version}</version>
+                        <configuration>
+                            <skip>false</skip>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>${maven-gpg-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>${nexus-staging-maven-plugin.version}</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <serverId>ossrh</serverId>
+                            <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>
